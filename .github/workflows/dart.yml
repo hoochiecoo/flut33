@@ -1,3 +1,5 @@
+name: Build Flutter APK
+
 on:
   push:
     branches: [ "main", "master" ]
@@ -19,25 +21,25 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
-          flutter-version: '3.19.0'
+          # Используем более свежую версию Flutter для лучшей совместимости
+          flutter-version: '3.22.0' 
           cache: true
 
       # 1. Генерируем нативные файлы Android
-      # Важно: имя проекта должно совпадать с 'name' в pubspec.yaml
       - name: Generate Android Project
         run: flutter create . --project-name=battery_info_app --org com.example.app
 
-      # 2. Исправляем minSdkVersion 
+      # 2. ИСПРАВЛЕНИЕ: Принудительно устанавливаем единую версию Kotlin
+      - name: Fix Kotlin Version Conflict
+        run: |
+          sed -i 's/ext.kotlin_version = .*/ext.kotlin_version = "1.8.20"/' android/build.gradle
+          echo "Forced Kotlin version to 1.8.20"
+
+      # 3. Исправляем minSdkVersion 
       - name: Fix minSdkVersion in build.gradle
         run: |
           sed -i 's|minSdkVersion .*|minSdkVersion 21|g' android/app/build.gradle
           echo "Patched minSdkVersion to 21"
-
-      # 3. Добавляем разрешение INTERNET (не обязательно для батареи, но не повредит)
-      - name: Add Internet Permission
-        run: |
-          sed -i 's|<application|<uses-permission android:name="android.permission.INTERNET"/>\\n    <application|g' android/app/src/main/AndroidManifest.xml
-          echo "Injected Internet Permission into AndroidManifest"
 
       - name: Get Dependencies
         run: flutter pub get
