@@ -1,5 +1,5 @@
-name: webview_ci_app
-description: A new Flutter project.
+name: battery_info_app
+description: A Flutter app to show battery status.
 publish_to: 'none'
 version: 1.0.0+1
 
@@ -9,8 +9,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  # Добавляем WebView, так как workflow называется Build WebView APK
-  webview_flutter: ^4.7.0
+  # Зависимость для получения данных о батарее
+  battery_plus: ^5.0.3
 
 dev_dependencies:
   flutter_test:
